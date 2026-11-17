@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dark Themed Ecommerce Website - 3am</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header class="header">
         <div class="nav-cont">
@@ -13,16 +15,39 @@
 
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Search to spook...">
-                <button>Search</button>
+                <button onclick="searchProducts()">Search</button>
             </div>
 
             <div class="nav-actions">
-                <a href="#" class="nav-btn">🧟‍♂️ Account</a>
-                <a href="#" class="nav-btn">🛒 Cart (<span id="cartCount">0</span>)</a>
-                <a href="#" class="nav-btn">📦 Order</a>
+                <a href="#" class="nav-btn" onclick="showPage('account')">🧟‍♂️ Account</a>
+                <a href="#" class="nav-btn" onclick="showPage('cart')">🛒 Cart (<span id="cartCount">0</span>)</a>
+                <a href="#" class="nav-btn" onclick="showPage('orders')">📦 Order</a>
             </div>
+            <button class="mobile-menu-btn">
+                ☰
+            </button>
         </div>
     </header>
+
+    <div class="sidebar-overlay">
+
+    </div>
+    <div class="sidebar">
+        <button class="close-siderbar">
+            ❌
+        </button>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" onclick="showPage('account')">🧟‍♂️ Account</a>
+            </li>
+            <li>
+                <a href="#" onclick="showPage('account')">🛒 Cart</a>
+            </li>
+            <li>
+                <a href="#" onclick="showPage('account')">📦 Orders</a>
+            </li>
+        </ul>
+    </div>
 
     <main class="main-content">
         <div id="homePage" class="page">
@@ -64,14 +89,13 @@
                         <div class="filter-group">
                             <label for="priceRange">Max Price:</label>
                             <input type="range" id="priceRange" min="0" max="10000" value="10000"
-                            onchange="applyFilters()">
+                                onchange="applyFilters()">
                             <span id="priceValue">$10000</span>
                         </div>
                         <div class="filter-group">
                             <label for="brandFilter">Brand</label>
 
-                            <select id="brandFilter"
-                            onchange="applyFilters()">
+                            <select id="brandFilter" onchange="applyFilters()">
                                 <option value="">All Brands</option>
                             </select>
                         </div>
@@ -111,7 +135,7 @@
                     Place Order
                 </h1>
                 <div id="orderSteps">
-                    
+
                 </div>
             </div>
         </div>
@@ -120,11 +144,40 @@
             <div class="container">
                 <h1>My orders</h1>
                 <div id="ordersList">
-                    
+
+                </div>
+            </div>
+        </div>
+        
+        <div id="accountPage" class="page hidden">
+            <div class="container">
+                <h1>My Account</h1>
+                <div class="order-form">
+                    <h2>Personal Inforamtion</h2>
+                    <div class="form-group">
+                        <label for="userName">Name:</label>
+                        <input type="text" id="userName" placeholder="Enter your name">
+                    </div> 
+                    <div class="form-group">
+                        <label for="userEmail">Email:</label>
+                        <input type="email" id="userEmail" placeholder="Enter your email">
+                    </div> 
+                    <div class="form-group">
+                        <label for="userPhone">userPhone:</label>
+                        <input type="text" id="userPhone" placeholder="Enter your phone number">
+                    </div> 
+                    <div class="form-group">
+                        <label for="userAddress">Address:</label>
+                        <textarea id="userAddress" placeholder="Enter your address">
+                    </div> 
+                    <button class="btn-primary" onclick="saveUserInfo()">
+                        Save Information
+                    </button>
                 </div>
             </div>
         </div>
     </main>
     <script src="script.js"></script>
 </body>
+
 </html>
