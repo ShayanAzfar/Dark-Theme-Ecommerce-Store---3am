@@ -9,6 +9,9 @@ let currentUser = {
 }
 let recentlyViewed = []
 let filteredProducts = []
+let cart = []
+let order = []
+let = currentOrderSteps = 1;
 
 async function loadData() {
     try {
@@ -275,10 +278,160 @@ function showProduct(productId){
     showPage("product");
 }
 
+function addToCart(productId){
+    const product = products.find(p => p.id === productId)
+    if(!product) return;
+
+    const selectedColor = document.getElementById("selectedColor")?.value || " ";
+    const selectedSize = document.getElementById("selectedSize")?.value || " ";
+
+    const existingItem = cart.find(items =>
+        item.id === productId &&
+        item.color === selectedColor &&
+        item.size === selectedSize
+    )
+
+    if (existingItem){
+        existingItem.quantity += 1;
+    } else {
+        cart.push ({
+            id:product.name,
+            name:product.name,
+            brand:product.brand,
+            price:product.price,
+            originalPrice:product.originalPrice,
+            discount:product.discount,
+            image:product.image,
+            color:selectedColor,
+            size:selectedSize,
+            quantity:1
+
+        })
+    }
+    updateCartCount();
+    saveCartData();
+    alert("Product added to cart!");
+}
+
+function renderCart(){
+    const cartItems = document.getElementById("cartItems");
+    const CartSummary = document.getElementById("cartSummary")
+
+    if(cart.length === 0){
+        cartItems.innerHTML= '<p>Your cart is empty. <a href="#" onclick-"showPage(\'home\')">Continue Shopping</a></p>'
+        CartSummary.innerHTML='';
+    }
+
+    cartItems.innerHTML= '';
+    let totalOriginal = 0;
+    let totalDiscount = 0;
+
+    cart.forEach((item,index)=> {
+        const itemTotal = item.price * item.quantity;
+        const itemOriginalTotal = item.originalPrice * item.quantity;
+        totalOriginal += itemOriginalTotal;
+        totalDiscount += itemTotal;
+
+        const cartItem ="cart-item";
+        cart.className="cart-item";
+        cartItem.innerHTML=`
+        <img src=$(item.image)" alt ="${item.name}">
+        <div class="cart-item-details">
+            <h3>${item.name}</h3>
+            <div class="product-brand">${item.brand}</div>
+            ${item.color ? `<p>Color: ${item.color}</p>` : ""}
+            ${item.size ? `<p>Size: ${item.size}</p>` : ""}
+            <div class="product-price">
+                <span class="current-price">$${item.price}</span>
+                <span class="original-price">$${item.originalPrice}</span>
+                <span class="discount-price">$${item.discount}% OFF</span>
+            </div>
+            <div class="quantity-controls">
+                <button class="quantity-btn"
+                onclick="updateQuantity(${index}, -1)">-</button>
+                <input type="number" class="quantity-input" value="${item.quantity}" min="1"
+                onchange="updateQuantity(${index},0,this.value)">
+                <button class="quantity-btn"
+                oneclick="updateQuantity(${index}, 1)">+</button>
+            </div>
+            <p>Total: $${itemTotal}</p>
+        </div>
+        <button class="btn-secondary" onclick="removeFromCart(${index})">Remove</button>
+        `;
+        cartItems.appendChild(cartItems)
+    })
+
+    const deliveryCharges = totalDiscounted > 500 ? 0 : 50 ;
+    const finalTotal = totalDiscounted + deliveryCharges;
+
+    CartSummary.innerHTML=`
+    <h3>PriceDetails</h3>
+    <div class="summary-row">
+        <span>Total MRP:</span>
+        <span>$${totalOriginal}</span>
+    </div>
+    <div class="summary-row">
+        <span>Discount:</span>
+        <span>$${totalOriginal - totalDiscounted}</span>
+    </div>
+    <div class="summary-row">
+        <span>Delivery Charges:</span>
+        <span>$${deliveryCharges === 0 ? "FREE": "$" + deliveryCharges}</span>
+    </div>
+    <div class=""summary=divider"></div>
+    <div class="summary-row summary-total">
+        <span>Total Amount:</span>
+        <span>$${finalTotal}</span>
+        </div>
+        
+        <button class="btn-primary" onclick="proceedToCheckout()"
+        style="width:100%; margin-top:20px;">
+        Place Order
+        </button>
+        `
+}
+
+function updateQuantity(index, change, newValue = null){
+    if(newValue !== null){
+        cart[index].quantity = Math.max(1,parent(newValue) || 1)
+    } else {
+        cart[index].quantity = Math.max(1, cart[index].quantity + change)
+    }
+
+    updateCartCount();
+    saveCartData();
+    renderCart();
+}
+
+function removeFromCart(index){
+    cart.splice(index, 1);
+    updateCartCount();
+    saveCartData();
+    renderCart();
+}
+
+function proceedToCheckout(){
+    currentOrderSteps = 1;
+    showPage('order');
+}
+
+function updateCartCount() {
+    const cartCount = cart.reduce((total,item)=> total + item.quantity,0)
+    document.getElementById("cartCount").textContent = cartCount
+}
+
+function saveCartData(){
+    try{ 
+        window.cartData = cart
+    } catch (e){
+        console.log("storage not availabl")
+    }
+}
+
 function saveRecentlyViewed(){
     try{
         window.recentlyViewedData = recentlyViewed;
     } catch(e){
-        console.log("Storage not available.")
+        console.log("Storage not available.");
     }
 }
