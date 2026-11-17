@@ -2,15 +2,15 @@ let categories = []
 let products = []
 
 let currentUser = {
-    name:"",
+    name: "",
     email: "",
-    phone:"",
-    address:""
+    phone: "",
+    address: ""
 }
 let recentlyViewed = []
 let filteredProducts = []
 let cart = []
-let order = []
+let orders = []
 let currentOrderSteps = 1;
 
 async function loadData() {
@@ -26,14 +26,14 @@ async function loadData() {
         initializeApp()
     } catch (error) {
         console.error("Error loading data:", error)
-
         document.body.innerHTML = '<div style="text-align:center;margin-top:50px;"><h2>Error loading data. Please refresh the page.</h2></div>'
     }
 }
+
 function initializeApp() {
     loadUserData();
     loadCartData();
-    loadOrdersData();
+    loadOrderData();
     loadRecentlyViewed();
     renderCategories();
     showPage("home");
@@ -64,20 +64,31 @@ function showPage(pageId) {
         case "account":
             loadUserAccountPage()
             break;
+        case "order":
+            renderOrderSteps();
+            break;
     }
 }
 
-function searchProducts(){
-    const searhterm = document.getElementById("searchInput").value.toLowerCase();
-    if (searchTerm.trim()==="") return;
+function toggleSideBar(){
+    const sidebar = document.querySelector(".sidebar") // FIXED: added dot
+    const overlay = document.querySelector(".sidebar-overlay")
 
-    filteredProducts = products.filter(product=>
+    if(sidebar) sidebar.classList.toggle("active")
+    if(overlay) overlay.classList.toggle("active")
+}
+
+function searchProducts(){
+    const searchTerm = document.getElementById("searchInput").value.toLowerCase(); // FIXED: typo searhTerm
+    if (searchTerm.trim() === "") return;
+
+    filteredProducts = products.filter(product =>
         product.name.toLowerCase().includes(searchTerm) ||
         product.brand.toLowerCase().includes(searchTerm) ||
         product.description.toLowerCase().includes(searchTerm)
     );
 
-    document.getElementById("categoryTitle").textcontent = `Search results for "${searchTerm}"`;
+    document.getElementById("categoryTitle").textContent = `Search results for "${searchTerm}"`;
     populateFilters();
     renderProducts();
     showPage("category")
@@ -85,6 +96,7 @@ function searchProducts(){
 
 function renderCategories() {
     const categoryGrid = document.getElementById("categoryGrid")
+    if(!categoryGrid) return;
     categoryGrid.innerHTML = "";
 
     categories.forEach(category => {
@@ -107,7 +119,7 @@ function renderCategories() {
             }
         }
         cardContent += `
-        <a href="#" class="category-btn">View Prodcuts</a> </div>
+        <a href="#" class="category-btn">View Products</a> </div>
         `;
 
         categoryCard.innerHTML = cardContent;
@@ -116,17 +128,15 @@ function renderCategories() {
 }
 
 function showCategory(categoryId) {
-    // let filteredProducts = [];
     if (categoryId === "recently-viewed") {
         filteredProducts = products.filter(product => recentlyViewed.includes(product.id))
-
         document.getElementById("categoryTitle").textContent = "Recently Viewed Products"
     } else {
         filteredProducts = products.filter(product => product.category === categoryId)
         const category = categories.find(cat => cat.id === categoryId)
-        document.getElementById("categoryTitle").textContent = category.name
-
-
+        if(category) {
+            document.getElementById("categoryTitle").textContent = category.name
+        }
     }
     populateFilters();
     renderProducts()
@@ -135,14 +145,14 @@ function showCategory(categoryId) {
 
 function populateFilters(){
     const brandFilter = document.getElementById("brandFilter");
+    if(!brandFilter) return;
     const brands = [...new Set(filteredProducts.map(product => product.brand))]
 
     brandFilter.innerHTML = '<option value="">All Brands</option>'
-    brands.forEach(brand=>{
+    brands.forEach(brand => {
         const option = document.createElement("option")
-        option.value= brand;
-        option.textContent= brand;
-        // option.textContent= brand;
+        option.value = brand;
+        option.textContent = brand;
         brandFilter.appendChild(option)
     })
 }
@@ -154,11 +164,9 @@ function applyFilters(){
 
     document.getElementById("priceValue").textContent = "$" + maxPrice;
 
-    let filtered = filteredProducts.filter(product =>{
-        if(product.price> maxPrice) return false;
-        if (selectedBrand && product.brand !== selectedBrand)
-        return false;
-
+    let filtered = filteredProducts.filter(product => {
+        if(product.price > maxPrice) return false;
+        if (selectedBrand && product.brand !== selectedBrand) return false;
         return true
     })
 
@@ -167,7 +175,7 @@ function applyFilters(){
             filtered.sort((a,b)=> a.price - b.price)
             break;
         case "price-high":
-            filtered.sort((a,b)=> b.price-a.price)
+            filtered.sort((a,b)=> b.price - a.price)
             break;
         case "rating":
             filtered.sort((a,b)=> b.rating - a.rating)
@@ -175,24 +183,25 @@ function applyFilters(){
         default:
             break;
     }
-    renderProducts(filtered);   
+    renderProducts(filtered);    
 }
 
-function renderProducts(products = filteredProducts) {
+function renderProducts(productsToRender = filteredProducts) {
     const productGrid = document.getElementById("productGrid")
+    if(!productGrid) return;
     productGrid.innerHTML = "";
 
-    if (products.length === 0){
+    if (productsToRender.length === 0){
         productGrid.innerHTML = '<p>No products found matching your criteria.</p>';
         return
     }
-    products.forEach(product => {
+    productsToRender.forEach(product => {
         const productCard = document.createElement("div");
         productCard.className = "product-card";
 
-        productCard.onclick =() => showProduct(product.id)
+        productCard.onclick = () => showProduct(product.id)
 
-        productCard.innerHTML= `
+        productCard.innerHTML = `
         <img src="${product.image}" alt="${product.name}">
         <div class="product-card-content">
             <div class="product-brand">${product.brand}</div>
@@ -202,11 +211,11 @@ function renderProducts(products = filteredProducts) {
             ${product.rating}
             </div>
             <div class="product-price">
-            <span class="current-price">${product.price}</span>
-            <span class="original-price">${product.originalPrice}</span>
+            <span class="current-price">$${product.price}</span>
+            <span class="original-price">$${product.originalPrice}</span>
             <span class="discount">${product.discount}% OFF</span>
             </div>
-            </div>
+        </div>
         `;
 
         productGrid.appendChild(productCard)
@@ -218,21 +227,22 @@ function showProduct(productId){
     if(!product) return
     if(!recentlyViewed.includes(productId)){
         recentlyViewed.unshift(productId);
-        if(recentlyViewed.length>10){
+        if(recentlyViewed.length > 10){
             recentlyViewed.pop()
         }
         saveRecentlyViewed();
     }
 
     const productDetail = document.getElementById("productDetail");
+    if(!productDetail) return;
     const deliveryDate = new Date()
-    deliveryDate.setDate(deliveryDate.getDate() + 7 )
+    deliveryDate.setDate(deliveryDate.getDate() + 7)
 
     productDetail.innerHTML = `
     <div>
         <img src="${product.image}" alt="${product.name}" class="product-image">
     </div>
-    <div class="product-info"> <!-- FIXED: changed dot to hyphen -->
+    <div class="product-info">
         <h1>${product.name}</h1>
         <div class="brand">${product.brand}</div>
         <div class="product-rating">
@@ -240,8 +250,8 @@ function showProduct(productId){
             ${product.rating}/5
         </div>
         <div class="product-price">
-            <span class="current-price">${product.price}</span>
-            <span class="original-price">${product.originalPrice}</span>
+            <span class="current-price">$${product.price}</span>
+            <span class="original-price">$${product.originalPrice}</span>
             <span class="discount">${product.discount}% OFF</span>
         </div>
         <div class="description">${product.description}</div>
@@ -261,7 +271,7 @@ function showProduct(productId){
             ${product.sizes.length > 0 ? `
                 <div class="option-group">
                 <label>Size:</label>
-                <select id="selectedSize"> <!-- FIXED: added opening quote -->
+                <select id="selectedSize">
                     ${product.sizes.map(size =>
                         `<option value="${size}">${size}</option>`
                     ).join("")}
@@ -284,7 +294,7 @@ function showProduct(productId){
         <div class="delivery-info">
             <h4>Delivery Information</h4>
             <p>📅 Delivery by ${deliveryDate.toLocaleDateString()}</p>
-            <p>🔁 10 days return policy</p> <!-- FIXED: added closing bracket -->
+            <p>🔁 10 days return policy</p>
             <p>💰 Cash on delivery available</p>
         </div>
 
@@ -319,17 +329,16 @@ function addToCart(productId){
         existingItem.quantity += 1;
     } else {
         cart.push ({
-            id:product.id,
-            name:product.name,
-            brand:product.brand,
-            price:product.price,
-            originalPrice:product.originalPrice,
-            discount:product.discount,
-            image:product.image,
-            color:selectedColor,
-            size:selectedSize,
-            quantity:1
-
+            id: product.id,
+            name: product.name,
+            brand: product.brand,
+            price: product.price,
+            originalPrice: product.originalPrice,
+            discount: product.discount,
+            image: product.image,
+            color: selectedColor,
+            size: selectedSize,
+            quantity: 1
         })
     }
     updateCartCount();
@@ -339,55 +348,56 @@ function addToCart(productId){
 
 function renderCart(){
     const cartItems = document.getElementById("cartItems");
-    const CartSummary = document.getElementById("cartSummary")
+    const cartSummary = document.getElementById("cartSummary")
+    if(!cartItems || !cartSummary) return;
 
     if(cart.length === 0){
-    cartItems.innerHTML = '<p>Your cart is empty. <a href="#" onclick="showPage(\'home\')">Continue Shopping</a></p>';
-    CartSummary.innerHTML='';
-    return;
-}
+        cartItems.innerHTML = '<p>Your cart is empty. <a href="#" onclick="showPage(\'home\')">Continue Shopping</a></p>';
+        cartSummary.innerHTML = '';
+        return;
+    }
 
-    cartItems.innerHTML= '';
+    cartItems.innerHTML = '';
     let totalOriginal = 0;
     let totalDiscounted = 0;
 
-cart.forEach((item, index) => {
-    const itemTotal = item.price * item.quantity;
-    const itemOriginalTotal = item.originalPrice * item.quantity;
-    totalOriginal += itemOriginalTotal;
-    totalDiscounted += itemTotal; // make sure variable names match
+    cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        const itemOriginalTotal = item.originalPrice * item.quantity;
+        totalOriginal += itemOriginalTotal;
+        totalDiscounted += itemTotal;
 
-    const cartItemEl = document.createElement("div");
-    cartItemEl.className = "cart-item";
-    cartItemEl.innerHTML = `
-        <img src="${item.image}" alt="${item.name}">
-        <div class="cart-item-details">
-            <h3>${item.name}</h3>
-            <div class="product-brand">${item.brand}</div>
-            ${item.color ? `<p>Color: ${item.color}</p>` : ""}
-            ${item.size ? `<p>Size: ${item.size}</p>` : ""}
-            <div class="product-price">
-                <span class="current-price">$${item.price}</span>
-                <span class="original-price">$${item.originalPrice}</span>
-                <span class="discount-price">$${item.discount}% OFF</span>
+        const cartItemEl = document.createElement("div");
+        cartItemEl.className = "cart-item";
+        cartItemEl.innerHTML = `
+            <img src="${item.image}" alt="${item.name}">
+            <div class="cart-item-details">
+                <h3>${item.name}</h3>
+                <div class="product-brand">${item.brand}</div>
+                ${item.color ? `<p>Color: ${item.color}</p>` : ""}
+                ${item.size ? `<p>Size: ${item.size}</p>` : ""}
+                <div class="product-price">
+                    <span class="current-price">$${item.price}</span>
+                    <span class="original-price">$${item.originalPrice}</span>
+                    <span class="discount-price">$${item.discount}% OFF</span>
+                </div>
+                <div class="quantity-controls">
+                    <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                    <input type="number" class="quantity-input" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, 0, this.value)">
+                    <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                </div>
+                <p>Total: $${itemTotal}</p>
             </div>
-            <div class="quantity-controls">
-                <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
-                <input type="number" class="quantity-input" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, 0, this.value)">
-                <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
-            </div>
-            <p>Total: $${itemTotal}</p>
-        </div>
-        <button class="btn-secondary" onclick="removeFromCart(${index})">Remove</button>
-    `;
-    cartItems.appendChild(cartItemEl);
-});
+            <button class="btn-secondary" onclick="removeFromCart(${index})">Remove</button>
+        `;
+        cartItems.appendChild(cartItemEl);
+    });
 
-    const deliveryCharges = totalDiscounted > 500 ? 0 : 50 ;
+    const deliveryCharges = totalDiscounted > 500 ? 0 : 50;
     const finalTotal = totalDiscounted + deliveryCharges;
 
-    CartSummary.innerHTML=`
-    <h3>PriceDetails</h3>
+    cartSummary.innerHTML = `
+    <h3>Price Details</h3>
     <div class="summary-row">
         <span>Total MRP:</span>
         <span>$${totalOriginal}</span>
@@ -398,26 +408,22 @@ cart.forEach((item, index) => {
     </div>
     <div class="summary-row">
         <span>Delivery Charges:</span>
-        <span>$${deliveryCharges === 0 ? "FREE": "$" + deliveryCharges}</span>
+        <span>$${deliveryCharges === 0 ? "FREE" : "$" + deliveryCharges}</span>
     </div>
     <div class="summary-divider"></div>
-    <div class="summary-row summary-total">
+    <div class="summary-row summary-total white">
         <span>Total Amount:</span>
         <span>$${finalTotal}</span>
-        </div>
-        
-        <button class="btn-primary" onclick="proceedToCheckout()"
-        style="width:100%; margin-top:20px;">
+    </div>
+    <button class="btn-primary" onclick="proceedToCheckout()" style="width:100%; margin-top:20px;">
         Place Order
-        </button>
-        `
+    </button>
+    `
 }
-
-
 
 function updateQuantity(index, change, newValue = null){
     if(newValue !== null){
-        cart[index].quantity = Math.max(1,parseInt(newValue) || 1)
+        cart[index].quantity = Math.max(1, parseInt(newValue) || 1)
     } else {
         cart[index].quantity = Math.max(1, cart[index].quantity + change)
     }
@@ -429,12 +435,13 @@ function updateQuantity(index, change, newValue = null){
 
 function renderOrderSteps(){
     const orderSteps = document.getElementById("orderSteps")
+    if(!orderSteps) return;
 
     if(currentOrderSteps === 1){
         if(!currentUser.name || !currentUser.phone || !currentUser.address) {
-            orderSteps.innerHTML=`
-            <div class=order-form">
-                <h2>Step 1:Enter Your Details</h2>
+            orderSteps.innerHTML = `
+            <div class="order-form">
+                <h2>Step 1: Enter Your Details</h2>
                 <div class="form-group">
                     <label for="orderName">Name:</label>
                     <input type="text" id="orderName" value="${currentUser.name}" placeholder="Enter your name">
@@ -453,35 +460,34 @@ function renderOrderSteps(){
             </div>   
             `;
         } else {
-            currentOrderSteps =2;
+            currentOrderSteps = 2;
             renderOrderSteps()
         }
     } else if(currentOrderSteps === 2){
-        const cartTotal = cart.reduce((total,item)=>total + (item.price * item.quantity), 0)
-        const deliveryCharges = cartTotal > 500? 0 : 50;
+        const cartTotal = cart.reduce((total,item)=> total + (item.price * item.quantity), 0)
+        const deliveryCharges = cartTotal > 500 ? 0 : 50;
         const finalTotal = cartTotal + deliveryCharges;
 
         let cartItemsHtml = '';
-        cart.forEach(item=>{
+        cart.forEach(item => {
             cartItemsHtml += `
             <div class="cart-item">
                 <img src="${item.image}" alt="${item.name}">
                 <div class="cart-item-details">
                     <h3>${item.name}</h3>
                     <div class="product-brand">${item.brand}</div>
-                    ${item.color ? `<p>Color: ${item.color}<p>`:""}
-                    ${item.size ? `<p>Size: ${item.size}<p>`:""}
+                    ${item.color ? `<p>Color: ${item.color}</p>` : ""}
+                    ${item.size ? `<p>Size: ${item.size}</p>` : ""}
                     <p>Quantity: ${item.quantity}</p>
                     <p>Price: $${item.price}</p>
                 </div>
             </div>
-
             `
         })
 
         orderSteps.innerHTML = `
         <div class="order-form">
-            <h2>Step 2 : Order Summar</h2>
+            <h2>Step 2: Order Summary</h2>
             <div class="address-section">
                 <h3>Delivery Address</h3>
                 <p><strong>${currentUser.name}</strong></p>
@@ -493,50 +499,43 @@ function renderOrderSteps(){
             ${cartItemsHtml}
 
             <div class="cart-summary">
-            <div class="summary-row">
-                <span Items Total:</span>
-                <span> $${cartTotal}</span>
+                <div class="summary-row">
+                    <span>Items Total:</span>
+                    <span>$${cartTotal}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery Charges:</span>
+                    <span>${deliveryCharges === 0 ? "FREE" : "$" + deliveryCharges}</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row summary-total">
+                    <span>Total Amount:</span>
+                    <span>$${finalTotal}</span>
+                </div>
             </div>
-            <div class="summary-row">
-                <span Delivery Charges:</span>
-                <span> ${deliveryCharges===0? "FREE":"$" + deliveryCharges}</span>
-            </div>
-            <div class="summary-divider"></div>
-            <div class="summary-row summary-total">
-                <span Total Amount:</span>
-                <span> $${finalTotal}</span>
-            </div>
-        </div>
 
-        <button class="btn-primary"
-        onclick="proceedToPayment()">Proceed to Payment</button>
+            <button class="btn-primary" onclick="proceedToPayment()" style="margin-top:20px;">Proceed to Payment</button>
         </div>
         `;
     } else if (currentOrderSteps === 3){
-
-        orderSteps.innerHTML= `
-
+        orderSteps.innerHTML = `
         <div class="order-form">
-            <h2>Step 3:Payment</h2>
+            <h2>Step 3: Payment</h2>
             <div class="payment-options">
                 <div class="payment-option">
-                    <input type="radio" id="upi"
-                    name="payment" value="upi"
+                    <input type="radio" id="upi" name="payment" value="upi">
                     <label for="upi">UPI Payment</label>
                 </div>
                 <div class="payment-option">
-                    <input type="radio" id="card"
-                    name="payment" value="card"
+                    <input type="radio" id="card" name="payment" value="card">
                     <label for="card">Credit/Debit Card</label>
                 </div>
-            
                 <div class="payment-option">
-                    <input type="radio" id="cod"
-                    name="payment" value="cod" checked
+                    <input type="radio" id="cod" name="payment" value="cod" checked>
                     <label for="cod">Cash on Delivery</label>
                 </div>
             </div>
-            <button class="btn-primary" onclick="placeOrder()"> Place Order</button>
+            <button class="btn-primary" onclick="placeOrder()">Place Order</button>
         </div>
         `
     }
@@ -544,7 +543,7 @@ function renderOrderSteps(){
 
 function saveOrderDetails(){
     const name = document.getElementById("orderName").value.trim()
-    const phone = document.getElementById("orderPhoto").value.trim()
+    const phone = document.getElementById("orderPhone").value.trim()
     const address = document.getElementById("orderAddress").value.trim()
 
     if(!name || !phone || !address){
@@ -560,84 +559,85 @@ function saveOrderDetails(){
     renderOrderSteps()
 }
 
-function proceedTopayment(){
+function proceedToPayment(){
     currentOrderSteps = 3;
     renderOrderSteps()
 }
 
 function placeOrder(){
-    const paymentMethod = document.querySelector('input[name="payment":checked')?.value
+    const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value // FIXED selector
 
     if(!paymentMethod){
         alert("Please select a payment method.")
-
         return;
     }
 
-    const orderId = "ORD" + DataTransfer.now();
+    const orderId = "ORD" + Date.now(); // FIXED Date.now()
     const orderDate = new Date()
     const deliveryDate = new Date();
-    deliveryDate.setDate(deliveryDate.getDate() +7)
+    deliveryDate.setDate(deliveryDate.getDate() + 7)
 
-    const order = {
-        id:orderId,
-        items:[...cart],
-        total: cart.reduce((total,item)=> total +(item.price * item.quantity),0),
-        deliveryCharges : cart.reduce((total,item)=> total + (item.price + item.quantity),0) > 500 ? 0 : 50,
-        paymentMethod:paymentMethod,
-        order:orderDate,
-        deliveryDate:deliveryDate,
-        status:"confirmed",
-        address:currentUser.address,
-        phone:currentUser.phone,
-        name:currentUser.name
+    const newOrder = {
+        id: orderId,
+        items: [...cart],
+        total: cart.reduce((total,item)=> total + (item.price * item.quantity), 0),
+        deliveryCharges: cart.reduce((total,item)=> total + (item.price * item.quantity), 0) > 500 ? 0 : 50,
+        paymentMethod: paymentMethod,
+        orderDate: orderDate,
+        deliveryDate: deliveryDate,
+        status: "confirmed",
+        address: currentUser.address,
+        phone: currentUser.phone,
+        name: currentUser.name
     };
-    orders.push(order)
+    orders.push(newOrder)
     saveOrdersData();
 
-    cart=[]
+    cart = []
     updateCartCount();
     saveCartData();
 
-    document.getElementById("orderSteps").innerHTML=`
+    document.getElementById("orderSteps").innerHTML = `
     <div class="order-success">
         <h1>🎉 Order Placed Successfully!</h1>
-        <p>Your order ID is :<strong>${orderId}</strong></p>
+        <p>Your order ID is: <strong>${orderId}</strong></p>
         <p>Expected delivery: ${deliveryDate.toLocaleDateString()}</p>
-        <button class="btn-primary" onclick="showPage("orders")">View My Orders</button>
-        <button class="btn-secondary" onclick="showPage("home")">Continue Shopping</button>
+        <button class="btn-primary" onclick="showPage('orders')">View My Orders</button>
+        <button class="btn-secondary" onclick="showPage('home')">Continue Shopping</button>
     </div>
     `;
 }
 
 function renderOrders(){
     const ordersList = document.getElementById("ordersList")
+    if(!ordersList) return;
 
     if(orders.length === 0){
-        ordersList.innerHTML='<p>No orders found. <a href="#" onclick="showPage(\'home\')">Start shopping</a></p>;
+        ordersList.innerHTML = '<p>No orders found. <a href="#" onclick="showPage(\'home\')">Start shopping</a></p>';
         return;
     }
     ordersList.innerHTML = '';
 
-    const sortedOrders = [...orders].sort((a.b)=> new Date(b.orderDate) - new Date(a.orderDate))
+    const sortedOrders = [...orders].sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate)) // FIXED comma
 
-    sortedOrders.forEach(order=>{
+    sortedOrders.forEach(order => {
         const currentDate = new Date();
-        const isDelivered = currentDate> order.deliveryDate;
+        const parsedDeliveryDate = new Date(order.deliveryDate);
+        const isDelivered = currentDate > parsedDeliveryDate;
 
         const orderDiv = document.createElement("div")
-        orderDiv.className="order-card";
+        orderDiv.className = "order-card";
 
-        let orderItemsHtml ="";
-        order.items.forEach(item=>{
+        let orderItemsHtml = "";
+        order.items.forEach(item => {
             orderItemsHtml += `
-            <div class="cart-items">
+            <div class="cart-item">
                 <img src="${item.image}" alt="${item.name}">
                 <div class="cart-item-details">
-                <h3>${item.name}</h3>
-                <div class="product-brand">${item.brand}</div>
-                ${item.color ? `<p>Color: ${item.color}<p>`:""}
-                    ${item.size ? `<p>Size: ${item.size}<p>`:""}
+                    <h3>${item.name}</h3>
+                    <div class="product-brand">${item.brand}</div>
+                    ${item.color ? `<p>Color: ${item.color}</p>` : ""}
+                    ${item.size ? `<p>Size: ${item.size}</p>` : ""}
                     <p>Quantity: ${item.quantity}</p>
                     <p>Price: $${item.price}</p>
                 </div>
@@ -646,17 +646,17 @@ function renderOrders(){
         })
 
         orderDiv.innerHTML = `
-        <div class="order-header" onclick="toggleOrderDetails("${order.id}")">
+        <div class="order-header" onclick="toggleOrderDetails('${order.id}')">
             <div class="order-summary">
-                <h3> Order ID:${order.id}</h3>
-                <span class="status-badge ${isDelivered ? "delivered":on-way}>
+                <h3>Order ID: ${order.id}</h3>
+                <span class="status-badge ${isDelivered ? "delivered" : "on-way"}">
                     ${isDelivered ? "Delivered" : "On the Way"}
                 </span>
             </div>
             <div class="order-meta">
-                <p><strong>Order Date:</strong>${order.orderDate.toLocaleDateString()}</p>
-                <p><strong>Total:</strong>${order.total + order.deliveryCharges}</p>
-                <p><strong>Items:</strong>${order.items.length} item${order.items.length> 1 ? "s" : ""}</p>
+                <p><strong>Order Date:</strong> ${new Date(order.orderDate).toLocaleDateString()}</p>
+                <p><strong>Total:</strong> $${order.total + order.deliveryCharges}</p>
+                <p><strong>Items:</strong> ${order.items.length} item${order.items.length > 1 ? "s" : ""}</p>
             </div>
             <div class="dropdown-arrow">
                 <span class="arrow-icon">🔻</span>
@@ -665,7 +665,7 @@ function renderOrders(){
 
         <div class="order-details" id="details-${order.id}" style="display:none;">
             <div class="order-info">
-                <p><strong>Delivery Date:</strong> ${order.deliveryDate.toLocaleDateString()}</p>
+                <p><strong>Delivery Date:</strong> ${parsedDeliveryDate.toLocaleDateString()}</p>
                 <p><strong>Payment Method:</strong> ${order.paymentMethod.toUpperCase()}</p>
 
                 <div class="address-section">
@@ -679,18 +679,18 @@ function renderOrders(){
                 ${orderItemsHtml}
 
                 <div class="cart-summary">
-                    div class="summary-row">
+                    <div class="summary-row">
                         <span>Items Total:</span>
-                        <span>${order.total}</span>
+                        <span>$${order.total}</span>
                     </div>
-                    div class="summary-row">
+                    <div class="summary-row">
                         <span>Delivery Charges:</span>
                         <span>${order.deliveryCharges === 0 ? "FREE" : "$" + order.deliveryCharges}</span>
                     </div>
                     <div class="summary-divider"></div>
-                    div class="summary-row summary-total">
+                    <div class="summary-row summary-total">
                         <span>Total Price:</span>
-                        <span>${order.total + order.deliveryCharges}</span>
+                        <span>$${order.total + order.deliveryCharges}</span>
                     </div>
                 </div>
             </div>
@@ -701,37 +701,30 @@ function renderOrders(){
 }
 
 function saveOrdersData(){
-    try{
-        window.ordersDate = orders
-    } catch(e){
-        console.log("Storage not available.")
-    }
+    localStorage.setItem("ordersData", JSON.stringify(orders))
 }
 
 function toggleOrderDetails(orderId){
-    const detailsDiv = document.getElementById('details-${orderId}')
+    const detailsDiv = document.getElementById(`details-${orderId}`)
+    if(!detailsDiv) return;
     const arrowIcon = detailsDiv.previousElementSibling.querySelector(".arrow-icon")
 
     if(detailsDiv.style.display === "none"){
-        detailsDiv.style.display ="block";
+        detailsDiv.style.display = "block";
         arrowIcon.style.transform = "rotate(180deg)"
     } else {
-        detailsDiv.style.display ="none";
+        detailsDiv.style.display = "none";
         arrowIcon.style.transform = "rotate(0deg)"
     }
 }
 
 function saveUserData(){
-    try{
-        window.userData = currentUser
-    } catch(e){
-        console.log("Storage not available.")
-    }
+    localStorage.setItem("userData", JSON.stringify(currentUser))
 }
 
 function loadUserAccountPage(){
     document.getElementById("userName").value = currentUser.name || "";
-    document.getElementById("userEmail").vlaue = currentUser.email || "";
+    document.getElementById("userEmail").value = currentUser.email || "";
     document.getElementById("userPhone").value = currentUser.phone || "";
     document.getElementById("userAddress").value = currentUser.address || "";
 }
@@ -743,7 +736,7 @@ function saveUserInfo(){
     currentUser.address = document.getElementById("userAddress").value.trim()
 
     saveUserData()
-    alert("Information saved successfuly!")
+    alert("Information saved successfully!")
 }
 
 function removeFromCart(index){
@@ -759,59 +752,44 @@ function proceedToCheckout(){
 }
 
 function updateCartCount() {
-    const cartCount = cart.reduce((total,item)=> total + item.quantity,0)
-    document.getElementById("cartCount").textContent = cartCount
+    const cartCount = cart.reduce((total,item)=> total + item.quantity, 0)
+    const cartCountEl = document.getElementById("cartCount");
+    if(cartCountEl) cartCountEl.textContent = cartCount;
 }
 
 function saveCartData(){
-    try{ 
-        window.cartData = cart
-    } catch (e){
-        console.log("storage not availabl")
-    }
+   localStorage.setItem("cartData", JSON.stringify(cart))
 }
 
 function saveRecentlyViewed(){
-    try{
-        window.recentlyViewedData = recentlyViewed;
-    } catch(e){
-        console.log("Storage not available.");
+   localStorage.setItem("recentlyViewedData", JSON.stringify(recentlyViewed))
+}
+
+function loadUserData(){
+    const userData = localStorage.getItem("userData")
+    if(userData){
+        currentUser = JSON.parse(userData)
     }
 }
 
-function loadUserData (){
-    try {
-        if(window.userData){
-            currentUser = window.userData
-        }
-    } catch (e) {
-        console.log("Storage not available.");
-    }
-}
 function loadCartData(){
-    try {
-        if(window.cartData){
-            cart = window.cartData
-        }
-    } catch(e) {
-        console.log("Storage not available.");
+    const cartData = localStorage.getItem("cartData")
+    if(cartData){
+        cart = JSON.parse(cartData)
+        updateCartCount()
     }
 }
+
 function loadOrderData(){
-    try {
-        if(window.orderData){
-            orders = window.ordersData
-        }
-    } catch(e) {
-        console.log("Storage not available.");
+    const ordersData = localStorage.getItem("ordersData")
+    if(ordersData){
+        orders = JSON.parse(ordersData)
     }
 }
+
 function loadRecentlyViewed(){
-    try {
-        if(window.recentlyViewedData){
-            recentlyViewed = window.recentlyViewedData
-        }
-    } catch(e) {
-        console.log("Storage not available.");
+    const recentlyViewedData = localStorage.getItem("recentlyViewedData")
+    if(recentlyViewedData){
+        recentlyViewed = JSON.parse(recentlyViewedData)
     }
 }

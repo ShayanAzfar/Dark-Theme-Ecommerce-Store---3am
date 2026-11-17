@@ -23,28 +23,28 @@
                 <a href="#" class="nav-btn" onclick="showPage('cart')">🛒 Cart (<span id="cartCount">0</span>)</a>
                 <a href="#" class="nav-btn" onclick="showPage('orders')">📦 Order</a>
             </div>
-            <button class="mobile-menu-btn">
+            <button class="mobile-menu-btn" onclick="toggleSideBar()">
                 ☰
             </button>
         </div>
     </header>
 
-    <div class="sidebar-overlay">
+    <div class="sidebar-overlay" onclick="toggleSideBar()">
 
     </div>
     <div class="sidebar">
-        <button class="close-siderbar">
+        <button class="close-siderbar" onclick="toggleSideBar()">
             ❌
         </button>
         <ul class="sidebar-menu">
             <li>
-                <a href="#" onclick="showPage('account')">🧟‍♂️ Account</a>
+                <a href="#" onclick="toggleSideBar();showPage('account')">🧟‍♂️ Account</a>
             </li>
             <li>
-                <a href="#" onclick="showPage('account')">🛒 Cart</a>
+                <a href="#" onclick="toggleSideBar();showPage('cart')">🛒 Cart</a>
             </li>
             <li>
-                <a href="#" onclick="showPage('account')">📦 Orders</a>
+                <a href="#" onclick="toggleSideBar();showPage('orders')">📦 Orders</a>  
             </li>
         </ul>
     </div>
@@ -153,7 +153,7 @@
             <div class="container">
                 <h1>My Account</h1>
                 <div class="order-form">
-                    <h2>Personal Inforamtion</h2>
+                    <h2>Personal Information</h2>
                     <div class="form-group">
                         <label for="userName">Name:</label>
                         <input type="text" id="userName" placeholder="Enter your name">
@@ -163,12 +163,12 @@
                         <input type="email" id="userEmail" placeholder="Enter your email">
                     </div> 
                     <div class="form-group">
-                        <label for="userPhone">userPhone:</label>
+                        <label for="userPhone">Phone Number:</label>
                         <input type="text" id="userPhone" placeholder="Enter your phone number">
                     </div> 
                     <div class="form-group">
                         <label for="userAddress">Address:</label>
-                        <textarea id="userAddress" placeholder="Enter your address">
+                        <textarea id="userAddress" placeholder="Enter your address"></textarea>
                     </div> 
                     <button class="btn-primary" onclick="saveUserInfo()">
                         Save Information
