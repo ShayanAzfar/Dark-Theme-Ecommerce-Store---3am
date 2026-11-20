@@ -33,7 +33,7 @@
 
     </div>
     <div class="sidebar">
-        <button class="close-siderbar" onclick="toggleSideBar()">
+        <button class="close-sidebar" onclick="toggleSideBar()">
             ❌
         </button>
         <ul class="sidebar-menu">
@@ -44,7 +44,7 @@
                 <a href="#" onclick="toggleSideBar();showPage('cart')">🛒 Cart</a>
             </li>
             <li>
-                <a href="#" onclick="toggleSideBar();showPage('orders')">📦 Orders</a>  
+                <a href="#" onclick="toggleSideBar();showPage('orders')">📦 Orders</a>
             </li>
         </ul>
     </div>
@@ -148,7 +148,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div id="accountPage" class="page hidden">
             <div class="container">
                 <h1>My Account</h1>
@@ -157,19 +157,19 @@
                     <div class="form-group">
                         <label for="userName">Name:</label>
                         <input type="text" id="userName" placeholder="Enter your name">
-                    </div> 
+                    </div>
                     <div class="form-group">
                         <label for="userEmail">Email:</label>
                         <input type="email" id="userEmail" placeholder="Enter your email">
-                    </div> 
+                    </div>
                     <div class="form-group">
                         <label for="userPhone">Phone Number:</label>
                         <input type="text" id="userPhone" placeholder="Enter your phone number">
-                    </div> 
+                    </div>
                     <div class="form-group">
                         <label for="userAddress">Address:</label>
                         <textarea id="userAddress" placeholder="Enter your address"></textarea>
-                    </div> 
+                    </div>
                     <button class="btn-primary" onclick="saveUserInfo()">
                         Save Information
                     </button>
@@ -177,6 +177,26 @@
             </div>
         </div>
     </main>
+    <footer class="ftr">
+        <div class="col">
+            <a href="#" class="logo lg" onclick="showPage('home')">BuyToSpook</a>
+            <p>Dark Theme Ecommerce Store for Midnighters,<br>
+                In this Ecommerce website you can even track your orders and it also has a payment method option but
+                still needs a payment gateway or you can say a proper backend to get this website into the real
+                business.</p>
+        </div>
+        <div class="col col-right">
+            <h4>Quick Links</h4>
+            <a href="#" onclick="showPage('account')">🧟‍♂️ Account</a>
+            <a href="#" onclick="showPage('cart')">🛒 Cart</a>
+            <a href="#" onclick="showPage('orders')">📦 Order</a>
+        </div>
+        <div class="copyright">
+            <p>© 2026, BuyToSpook - Dark Theme Ecommerce Website Built for <a
+                    href="https://3am.hackclub.com/"><u>#3AM</u></a> Hackclub, Released under the
+                <a href="/license"><u>MIT License</u></a>.</p>
+        </div>
+    </footer>
     <script src="script.js"></script>
 </body>
 

@@ -756,6 +756,7 @@ h5 {
     border-radius: 16px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     margin-top: 32px;
+    margin-bottom: 32px;
     border: 1px solid rgb(177, 174, 174);
 }
 
@@ -1393,4 +1394,48 @@ h5 {
 
 .logo {
     font-size: 1.875rem;
+}
+.ftr {
+    background-color: rgba(22, 21, 21, 0.9);
+}
+footer {
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 10px 80px;
+}
+footer .col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+footer .col-right{
+    margin-top: 38px;
+}
+footer h4 {
+    font-size: 14px;
+    padding-bottom: 20px;
+}
+footer p{
+    font-size: 13px;
+    margin: 0 0 8px 0;
+}
+footer a{
+    font-size: 13px;
+    text-decoration: none;
+    color: #fff;
+    margin-bottom: 10px;
+}
+footer .lg {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    height: 100px;
+}
+footer .copyright {
+    width: 100%;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 2px solid rgb(177, 174, 174);
 }
