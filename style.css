@@ -152,7 +152,7 @@ h5 {
 }
 
 .hero {
-    background: linear-gradient(135deg, #fa8435 0%, #a15f33 100%);
+    background: linear-gradient(135deg, #fa3535 0%, #a13333 100%);
     color: white;
     padding: 120px 0;
     text-align: center;
@@ -255,7 +255,7 @@ h5 {
 }
 
 .category-card {
-    background: white;
+    background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.6);
@@ -305,12 +305,12 @@ h5 {
 .category-card h3 {
     font-size: 1.37rem;
     margin-bottom: 12px;
-    color: gray;
+    color: rgb(250, 86, 86);
     font-weight: 700;
 }
 
 .category-card p {
-    color: gray;
+    color: rgb(255, 255, 255);
     margin-bottom: 28px;
     font-size: 15px;
     line-height: 1.6;
@@ -344,7 +344,7 @@ h5 {
 }
 
 .product-card {
-    background: white;
+    background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
     color: gray;
     border-radius: 16px;
     overflow: hidden;
@@ -447,7 +447,7 @@ h5 {
 }
 
 .filter-section {
-    background: white;
+    background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
     padding: 32px;
     border-radius: 16px;
     margin-bottom: 32px;
@@ -740,7 +740,7 @@ h5 {
 }
 .cart-summary {
     background: rgba(139, 92, 246, 0.05);
-    color: #000;
+    color: white;
     padding: 32px;
     border-radius: 16px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -764,24 +764,24 @@ h5 {
 .summary-total {
     font-size: 1.375rem;
     font-weight: 800;
-    color: #000;
+    color: white;
 }
 
 .hidden {
     display: none !important;
 }
 .order-form .cart-item {
-    background: #f8fafc;
+    background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
     border: 1px solid #cbd5e1;
 }
 .order-form .cart-item-details h3,
 .order-form .cart-item-details p,
 .order-form .cart-item-details .product-brand {
-    color: #334155 !important;
+    color: white !important;
 }
 .order-form {
-    background: white;
-    color: black;
+    background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
+    color: white;
     padding: 40px;
     border-radius: 16px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.6);
@@ -842,7 +842,7 @@ h5 {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: white;
+    background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
 }
 
 .payment-option:hover {
@@ -856,7 +856,7 @@ h5 {
     transform: scale(1.2);
 }
 .payment-option label {
-    color: #000;
+    color: white;
     font-weight: 600;
     font-size: 15px;
     cursor: pointer;
@@ -871,7 +871,7 @@ h5 {
 .order-success {
     text-align: center;
     padding: 60px 40px;
-    background: linear-gradient(135deg, gray, rgb(177, 174, 174));
+    background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.8);
@@ -958,13 +958,14 @@ h5 {
 }
 
 .order-card {
-    background: linear-gradient(135deg, #fff 0%, #fafbfc 100%);
+    background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
     margin-bottom: 24px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
     overflow: hidden;
     transition: all 0.4 cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid rgba(226, 240, 240, 0.8);
     position: relative;
+    border-radius: 16px;
 }
 
 .order-card:hover {
@@ -1012,7 +1013,7 @@ h5 {
 .order-summary h3 {
     margin: 0;
     font-size: 1.2rem;
-    color: #1e293b;
+    color: white;
     font-weight: 700;
     letter-spacing: -0.025rem;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -1028,7 +1029,7 @@ h5 {
 .order-meta p{
     margin: 0;
     font-size: 0.875rem;
-    color: #64748b;
+    color: white;
     font-weight: 500;
 }
 .dropdown-arrow{
@@ -1052,7 +1053,7 @@ h5 {
 }
 .order-details {
     border-top: 1px solid rgba(226, 232, 240, 0.5);
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
     display: none;
     animation: fadeIn 0.3s ease-in-out;
 }
@@ -1075,14 +1076,14 @@ h5 {
 }
 .order-info p{
     margin: 10px 0;
-    color: #475569;
+    color: white;
     font-size: 0.875rem;
     line-height: 1.6;
     font-weight: 500;
 }
 .order-info h4{
     margin: 24px 0 16px;
-    font: #1e293b;
+    font: white;
     text-transform: uppercase;
     letter-spacing: 1px;
     position: relative;
@@ -1101,9 +1102,9 @@ h5 {
 .order-info .address-section{
     margin: 20px 0;
     padding: 20px;
-    background: linear-gradient(135deg, #ffff 0%, #fafbfc 100%);
+    background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
     border-radius: 12px;
-    border-left: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(226, 232, 240, 0.8);
     transition: all 0.3s ease;
 }
 
@@ -1114,7 +1115,7 @@ h5 {
 
 .order-info .address-section h4{
     margin-top: 0;
-    color: #1e293b;
+    color: white;
     text-decoration: none;
     font-size: 1.125rem;
     letter-spacing: 0;
@@ -1127,7 +1128,7 @@ h5 {
 
 .order-info .address-section p {
     margin: 6px 0;
-    color: #64748b;
+    color: white;
     font-size: 0.875rem;
 }
 .order-details .status-badge {
@@ -1153,7 +1154,7 @@ h5 {
     border: 1px solid #fbbf24;
 }
 .order-details .cart-item {
-    background: linear-gradient(135deg, #fff 0%, #fafbfc 100%);
+    background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
     margin: 16px 0;
     padding: 20px;
     border-radius: 12px;
@@ -1181,20 +1182,20 @@ h5 {
 .order-details .cart-item-details h3 {
     font-size: 1.125rem;
     margin: 0 0 8px 0;
-    color: #1e293b;
+    color: white;
     font-weight: 600;
     letter-spacing: -0.025rem;
 }
 .order-details .cart-item-details p {
     font-size: 0.875rem;
     margin: 4px 0;
-    color: #64748b;
+    color: white;
     font-weight: 500;
 }
 
 .order-details .product-brand {
     font-size: 0.875rem;
-    color: #94a3b8;
+    color: white;
     margin-bottom: 8px;
     font-weight: 600;
     text-transform: uppercase;
@@ -1202,7 +1203,7 @@ h5 {
 }
 
 .order-details .cart-summary {
-    background: linear-gradient(135deg, #fff 05, #fafbfc 100%);
+    background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
     padding: 24px;
     border-radius: 12px;
     margin-top: 24px;
@@ -1216,13 +1217,13 @@ h5 {
     align-items: center;
     margin-bottom: 12px;
     font-size: 0.875rem;
-    color: #475569;
+    color: white;
     letter-spacing: -0.025rem;
 }
 .order-details .summary-divider{
     border: none;
     height: 1px;
-    background: linear-gradient(90deg, transparent, #e2e8f0);
+    background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
     margin: 20px 0;
 }
 .hidden{
