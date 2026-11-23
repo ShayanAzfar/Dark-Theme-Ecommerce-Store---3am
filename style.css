@@ -227,6 +227,18 @@ h5 {
     box-shadow: 0 8px 20px rgba(17, 24, 39, 0.4);
 }
 
+.recommendations h2 {
+    text-align: center;
+    margin-bottom: 60px;
+    font-size: 2.5rem;
+    color: rgb(250, 86, 86);
+    font-weight: 800;
+    position: relative;
+}
+.recommendations {
+        padding: 100px 0 0;
+}
+
 .categories {
     padding: 100px 0;
     /* background: ; */
@@ -348,13 +360,19 @@ h5 {
 }
 
 .product-grid {
-    display: grid;
+    /* display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 32px; */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 24px;
     margin-top: 32px;
 }
 
 .product-card {
+    width: 300px;
     background: linear-gradient(135deg, #414242 0%, #1f1f1f 100%);
     color: gray;
     border-radius: 16px;
@@ -1265,6 +1283,9 @@ h5 {
     .filter-row{
         flex-direction: column;
         align-items: stretch;
+    }
+    .recommendations {
+        padding: 60px 0 0;
     }
     .categories{
         padding: 60px 0;

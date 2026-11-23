@@ -37,6 +37,7 @@ function initializeApp() {
     loadRecentlyViewed();
     renderCategories();
     showPage("home");
+    renderRecommendations();
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -54,6 +55,7 @@ function showPage(pageId) {
     switch (pageId) {
         case "home":
             renderCategories();
+            renderRecommendations();
             break;
         case "cart":
             renderCart();
@@ -92,6 +94,52 @@ function searchProducts(){
     populateFilters();
     renderProducts();
     showPage("category")
+}
+
+function renderRecommendations(){
+    const recommendGrid = document.getElementById("recommendGrid");
+    if (!recommendGrid) return;
+    recommendGrid.innerHTML ="";
+
+    let recommendProducts = [];
+
+if (recentlyViewed.length > 0) {
+        for (let i = 0; i < recentlyViewed.length; i++) {
+            const viewedProduct = products.find(p => p.id === recentlyViewed[i]);
+            if (viewedProduct) {
+                recommendProducts = products.filter(
+                    p => p.category === viewedProduct.category && p.id !== viewedProduct.id
+                );
+                if (recommendProducts.length > 0) break;
+            }
+        }
+    }
+
+    if (recommendProducts.length === 0) {
+        recommendProducts = products.filter(p => p.rating >= 4.3);
+    }
+
+    recommendProducts = recommendProducts.slice(0, 4);
+
+    recommendProducts.forEach(product => {
+        const productCard = document.createElement("div");
+        productCard.className = "product-card";
+        productCard.onclick = () => showProduct(product.id);
+
+        productCard.innerHTML = `
+        <img src="${product.image}" alt="${product.name}">
+        <div class="product-card-content">
+            <div class="product-brand">${product.brand}</div>
+            <h3>${product.name}</h3>
+            <div class="product-price">
+                <span class="current-price">$${product.price}</span>
+                <span class="original-price">$${product.originalPrice}</span>
+            </div>
+        </div>
+        `;
+
+        recommendGrid.appendChild(productCard)
+    })
 }
 
 function renderCategories() {
@@ -232,6 +280,8 @@ function showProduct(productId){
         }
         saveRecentlyViewed();
     }
+
+    renderRecommendations();
 
     const productDetail = document.getElementById("productDetail");
     if(!productDetail) return;
